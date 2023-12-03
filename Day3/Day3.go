@@ -18,6 +18,7 @@ func init () {
 func main() {
 	calibrations := readFile("Real");
 	fmt.Println(Part1Solver(calibrations));
+	fmt.Println(Part2Solver(calibrations));
 }
 
 func Part1Solver(calibration []string) int {
@@ -62,6 +63,53 @@ func NearSymbol(x [2]int, y int, calibration []string) bool {
 		}
 	}
 	return false;
+}
+
+func Part2Solver(engine []string) int {
+	gears := 0;
+	for j := 0; j < len(engine); j++ {
+		for i := 0; i < len(engine[j]); i++ {
+			if engine[j][i] == '*' {
+				gear := GetGears(i, j, engine);
+				log.Println("Gear is at x:", i, "y:", j, " len is:", len(gear));
+				if len(gear) == 2 {
+					log.Println("Gear is", gear[0], gear[1]);
+					gears += gear[0] * gear[1];
+				}
+			}
+		}
+	}
+	return gears;
+}
+
+func GetGears(x int, y int, engine []string) []int {
+	gear := []int{};
+	for j := Max(0, y - 1); j < Min(len(engine), y + 2); j++ {
+		skip := false;
+		for i := Max(0, x - 1); i < Min(len(engine[j]), x + 2); i++ {
+			if letter := engine[j][i]; letter <= '9' && letter >= '0' {
+				if !skip {
+					gear = append(gear, GetNum(engine[j], i));
+				}
+				skip = true;
+			} else {
+				skip = false;
+			}
+		}
+	}
+	return gear;
+}
+
+func GetNum(str string, pos int) int {
+	for pos > -1 && str[pos] <= '9' && str[pos] >= '0' {
+		pos--;
+	}
+	pos = Max(0, pos + 1);
+	temp := 0;
+	for ;pos < len(str) && str[pos] <= '9' && str[pos] >= '0'; pos++ {
+		temp = temp * 10 + int(str[pos]) - int('0');
+	}
+	return temp;
 }
 
 func Max(a int, b int) int {
