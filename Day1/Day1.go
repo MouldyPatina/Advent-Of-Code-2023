@@ -57,41 +57,33 @@ func realCalibrationPart2(calib []string) []int {
 				val = int(line[i]) - int('0')
 				break
 			}
-			if len(line)-i >= 3 {
-				if word := line[i:(i + 3)]; word == "one" {
-					val = 1
-					break
-				} else if word == "two" {
-					val = 2
-					break
-				} else if word == "six" {
-					val = 6
-					break
-				}
-			}
-			if len(line)-i >= 4 {
-				if word := line[i:(i + 4)]; word == "four" {
-					val = 4
-					break
-				} else if word == "five" {
-					val = 5
-					break
-				} else if word == "nine" {
-					val = 9
-					break
-				}
-			}
-			if len(line)-i >= 5 {
-				if word := line[i:(i + 5)]; word == "three" {
-					val = 3
-					break
-				} else if word == "seven" {
-					val = 7
-					break
-				} else if word == "eight" {
-					val = 8
-					break
-				}
+			if WrittenNumber(i, i+3, line, "one") {
+				val = 1
+				break
+			} else if WrittenNumber(i, i+3, line, "two") {
+				val = 2
+				break
+			} else if WrittenNumber(i, i+3, line, "six") {
+				val = 6
+				break
+			} else if WrittenNumber(i, i+4, line, "four") {
+				val = 4
+				break
+			} else if WrittenNumber(i, i+4, line, "five") {
+				val = 5
+				break
+			} else if WrittenNumber(i, i+4, line, "nine") {
+				val = 9
+				break
+			} else if WrittenNumber(i, i+5, line, "three") {
+				val = 3
+				break
+			} else if WrittenNumber(i, i+5, line, "seven") {
+				val = 7
+				break
+			} else if WrittenNumber(i, i+5, line, "eight") {
+				val = 8
+				break
 			}
 		}
 		for i := len(line) - 1; i >= 0; i-- {
@@ -99,46 +91,47 @@ func realCalibrationPart2(calib []string) []int {
 				val = val*10 + int(line[i]) - int('0')
 				break
 			}
-			if i >= 3 {
-				if word := line[(i - 2):(i + 1)]; word == "one" {
-					val = val*10 + 1
-					break
-				} else if word == "two" {
-					val = val*10 + 2
-					break
-				} else if word == "six" {
-					val = val*10 + 6
-					break
-				}
-			}
-			if i >= 4 {
-				if word := line[(i - 3):(i + 1)]; word == "four" {
-					val = val*10 + 4
-					break
-				} else if word == "five" {
-					val = val*10 + 5
-					break
-				} else if word == "nine" {
-					val = val*10 + 9
-					break
-				}
-			}
-			if i >= 5 {
-				if word := line[(i - 4):(i + 1)]; word == "three" {
-					val = val*10 + 3
-					break
-				} else if word == "seven" {
-					val = val*10 + 7
-					break
-				} else if word == "eight" {
-					val = val*10 + 8
-					break
-				}
+			if WrittenNumber(i-2, i+1, line, "one") {
+				val = val*10 + 1
+				break
+			} else if WrittenNumber(i-2, i+1, line, "two") {
+				val = val*10 + 2
+				break
+			} else if WrittenNumber(i-2, i+1, line, "six") {
+				val = val*10 + 6
+				break
+			} else if WrittenNumber(i-3, i+1, line, "four") {
+				val = val*10 + 4
+				break
+			} else if WrittenNumber(i-3, i+1, line, "five") {
+				val = val*10 + 5
+				break
+			} else if WrittenNumber(i-3, i+1, line, "nine") {
+				val = val*10 + 9
+				break
+			} else if WrittenNumber(i-4, i+1, line, "three") {
+				val = val*10 + 3
+				break
+			} else if WrittenNumber(i-4, i+1, line, "seven") {
+				val = val*10 + 7
+				break
+			} else if WrittenNumber(i-4, i+1, line, "eight") {
+				val = val*10 + 8
+				break
 			}
 		}
 		output = append(output, val)
 	}
 	return output
+}
+
+func WrittenNumber(start int, end int, str string, number string) bool {
+	if start < 0 || end > len(str) {
+		return false
+	} else if str[start:end] == number {
+		return true
+	}
+	return false
 }
 
 func Sum(input []int) int {
