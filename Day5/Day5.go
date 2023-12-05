@@ -15,7 +15,7 @@ func main() {
 	fmt.Println(Part2Solver(almanac))
 }
 
-func Part1Solver(almanac []string) uint32 {
+func Part1Solver(almanac []string) uint64 {
 	seeds := GetUInts32(almanac[0])
 	maps := GetMaps(almanac[2:])
 	for _, mp := range maps {
@@ -24,7 +24,7 @@ func Part1Solver(almanac []string) uint32 {
 	return min(seeds)
 }
 
-func Part2Solver(almanac []string) uint32 {
+func Part2Solver(almanac []string) uint64 {
 	seeds := GetUInts32(almanac[0])
 	maps := GetMaps(almanac[2:])
 	for _, mp := range maps {
@@ -39,13 +39,13 @@ type AlmanacMap struct {
 }
 
 type Convert struct {
-	destination uint32
-	source      uint32
-	rangeLength uint32
+	destination uint64
+	source      uint64
+	rangeLength uint64
 }
 
-func convertSeedsPart2(seeds []uint32, convert AlmanacMap) []uint32 {
-	changedSeeds := []uint32{}
+func convertSeedsPart2(seeds []uint64, convert AlmanacMap) []uint64 {
+	changedSeeds := []uint64{}
 	for i := 0; i < len(seeds); i += 2 {
 		seed := seeds[i]
 		lenSeed := seeds[i+1]
@@ -65,7 +65,10 @@ func convertSeedsPart2(seeds []uint32, convert AlmanacMap) []uint32 {
 					update.destination,
 					lenSeed-update.source+seed)
 				if lenSeed+seed > update.source+update.rangeLength {
-					log.Println("did not handle this case rip")
+					extra := convertSeedsPart2(
+						[]uint64{update.source + update.rangeLength, lenSeed + seed - update.source - update.rangeLength},
+						convert)
+					changedSeeds = append(changedSeeds, extra...)
 				}
 				lenSeed = update.source - seed
 			}
@@ -77,7 +80,7 @@ func convertSeedsPart2(seeds []uint32, convert AlmanacMap) []uint32 {
 	return changedSeeds
 }
 
-func convertSeeds(seeds []uint32, convert AlmanacMap) []uint32 {
+func convertSeeds(seeds []uint64, convert AlmanacMap) []uint64 {
 	for i := 0; i < len(seeds); i++ {
 		seed := seeds[i]
 		for _, update := range convert.Convertions {
@@ -112,9 +115,9 @@ func GetMaps(almanac []string) []AlmanacMap {
 	return maps
 }
 
-func GetUInts32(text string) []uint32 {
-	array := []uint32{}
-	temp := uint32(0)
+func GetUInts32(text string) []uint64 {
+	array := []uint64{}
+	temp := uint64(0)
 	i := 0
 	for text[i] > '9' || text[i] < '0' {
 		i++
@@ -122,7 +125,7 @@ func GetUInts32(text string) []uint32 {
 	for ; i < len(text); i++ {
 		letter := text[i]
 		if letter <= '9' && letter >= '0' {
-			temp = temp*10 + uint32(letter) - uint32('0')
+			temp = temp*10 + uint64(letter) - uint64('0')
 		} else {
 			array = append(array, temp)
 			temp = 0
@@ -132,7 +135,7 @@ func GetUInts32(text string) []uint32 {
 	return array
 }
 
-func min(array []uint32) uint32 {
+func min(array []uint64) uint64 {
 	temp := array[0]
 	for i := 1; i < len(array); i++ {
 		if temp > array[i] {
@@ -142,7 +145,7 @@ func min(array []uint32) uint32 {
 	return temp
 }
 
-func minPart2(array []uint32) uint32 {
+func minPart2(array []uint64) uint64 {
 	temp := array[0]
 	for i := 0; i < len(array); i += 2 {
 		if temp > array[i] {
@@ -152,7 +155,7 @@ func minPart2(array []uint32) uint32 {
 	return temp
 }
 
-func minNum(a uint32, b uint32) uint32 {
+func minNum(a uint64, b uint64) uint64 {
 	if a < b {
 		return a
 	}
