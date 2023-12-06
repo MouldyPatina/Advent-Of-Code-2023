@@ -11,13 +11,15 @@ func main() {
 	racers := readFile("Real")
 	fmt.Println("This is the solution to Part 1:")
 	fmt.Println(Part1Solver(racers))
+	fmt.Println("This is the solution to Part 2:")
+	fmt.Println(Part2Solver(racers))
 }
 
 func Part1Solver(racers []string) int {
 	raceLen := getTimes(racers[0])
 	bestTimes := getTimes(racers[1])
 	if len(raceLen) != len(bestTimes) {
-		log.Panicln("Error in inputs, but arrays should be the same length")
+		log.Println("Error in inputs, but arrays should be the same length")
 		return -1
 	}
 	output := 1
@@ -27,10 +29,16 @@ func Part1Solver(racers []string) int {
 	return output
 }
 
+func Part2Solver(racers []string) int {
+	raceLen := getSingleTimes(racers[0])
+	bestTimes := getSingleTimes(racers[1])
+	output := numBetterTimes(raceLen, bestTimes)
+	return output
+}
+
 func numBetterTimes(leng int, time int) int {
 	for i := 0; i < leng; i++ {
 		if i*(leng-i) > time {
-			log.Println(leng - 2*i + 1)
 			return leng - 2*i + 1
 		}
 	}
@@ -54,6 +62,20 @@ func getTimes(str string) []int {
 	}
 	times = append(times, temp)
 	return times
+}
+
+func getSingleTimes(str string) int {
+	temp := 0
+	pos := 0
+	for str[pos] > '9' || str[pos] < '0' {
+		pos++
+	}
+	for ; pos < len(str); pos++ {
+		if digit := str[pos]; digit <= '9' && digit >= '0' {
+			temp = temp*10 + int(digit) - int('0')
+		}
+	}
+	return temp
 }
 
 func init() {
