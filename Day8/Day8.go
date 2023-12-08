@@ -64,11 +64,25 @@ func Part2Solver(direction []string) int {
 			}
 		}
 	}
-
+	
+	mult := 1;
 	for _, joun := range Journey {
-		fmt.Println(joun)
+		mult = LCM(mult, joun);
 	}
-	return -1
+	return mult;
+}
+
+func LCM(a int, b int) int {
+	return a * b / GCD(a, b);
+}
+
+func GCD(a int, b int) int {
+	for b != 0 {
+		t := b;
+		b = a % b;
+		a = t;
+	}
+	return a; 
 }
 
 func GetStrings(str string) []string {
