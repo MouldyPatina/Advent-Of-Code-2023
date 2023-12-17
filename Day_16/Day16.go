@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	mirrors := readFile("Test")
+	mirrors := readFile("Real")
 	fmt.Println("This is the solution to Part 1:")
 	fmt.Println(Part1Solver(mirrors))
 	fmt.Println("This is the solution to Part 2:")
@@ -16,19 +16,70 @@ func main() {
 }
 
 func Part1Solver(mirrors []string) int {
-	laser := make([][]int, len(mirrors));
+	laser := make([][][]byte, len(mirrors));
 	for i := 0; i < len(mirrors); i++ {
-		laser[i] = make([]int, len(mirrors[i]));
+		laser[i] = make([][]byte, len(mirrors[i]));
 	}
 	FireLaser(mirrors, laser, 'R', []int{0,0});
 	return Sum(laser);
 }
 
-func FireLaser(mirror []string, light [][]int, move byte, pos []int) {
+func Part2Solver(mirrors []string) int {
+	laser := make([][][]byte, len(mirrors));
+	for i := 0; i < len(mirrors); i++ {
+		laser[i] = make([][]byte, len(mirrors[i]));
+	}
+	maxEnergy := 0;
+	for i := 0; i < len(mirrors); i++ {
+		FireLaser(mirrors, laser, 'R', []int{i,0});
+		tempEnergy := Sum(laser);
+		maxEnergy = Max(tempEnergy, maxEnergy);
+		MakeEmpty(laser);
+		FireLaser(mirrors, laser, 'R', []int{i,0})
+		tempEnergy = Sum(laser);
+		maxEnergy = Max(tempEnergy, maxEnergy);
+		MakeEmpty(laser);
+	}
+	for i := 0; i < len(mirrors[0]); i++ {
+		FireLaser(mirrors, laser, 'D', []int{0,i})
+		tempEnergy := Sum(laser);
+		maxEnergy = Max(tempEnergy, maxEnergy);
+		MakeEmpty(laser);
+		FireLaser(mirrors,laser,'U',[]int{len(mirrors)-1,i})
+		tempEnergy = Sum(laser);
+		maxEnergy = Max(tempEnergy, maxEnergy);
+		MakeEmpty(laser);
+	}
+	return maxEnergy;
+}
+
+func MakeEmpty(matrix [][][]byte) {
+	for i := 0; i < len(matrix); i++ {
+		for j := 0; j < len(matrix[i]); j++ {
+			matrix[i][j] = []byte{};
+		}
+	}
+}
+
+func Max(a int, b int) int {
+	if a > b {
+		return a;
+	}
+	return b;
+}
+
+func FireLaser(mirror []string, light [][][]byte, move byte, pos []int) {
 	if y, x := pos[0], pos[1]; x < 0 || x >= len(mirror[0]) || y < 0 || y >= len(mirror) {
 		return;
 	}
-	light[pos[0]][pos[1]] = 1;
+	if len(light[pos[0]][pos[1]]) > 0 {
+		for _, moved := range light[pos[0]][pos[1]] {
+			if moved == move {
+				return;
+			}
+		}
+	}
+	light[pos[0]][pos[1]] = append(light[pos[0]][pos[1]], move);
 	if mir := mirror[pos[0]][pos[1]]; ((mir == '|' || mir == '.') && move == 'U') || (mir == '\\' && move == 'L') || (mir == '/' && move == 'R') {
 		FireLaser(mirror, light, 'U', []int{pos[0] - 1, pos[1]});
 	} else if mir := mirror[pos[0]][pos[1]]; ((mir == '|' || mir == '.') && move == 'D') || (mir == '\\' && move == 'R') || (mir == '/' && move == 'L') {
@@ -46,18 +97,16 @@ func FireLaser(mirror []string, light [][]int, move byte, pos []int) {
 	}
 }
 
-func Sum(matrix [][]int) int {
+func Sum(matrix [][][]byte) int {
 	sum := 0;
 	for _, line := range matrix {
 		for _, num := range line {
-			sum += num;
+			if len(num) > 0 {
+				sum++;
+			}
 		}
 	}
 	return sum;
-}
-
-func Part2Solver(mirrors []string) int {
-	return -1;
 }
 
 func init() {
